@@ -57,6 +57,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Apolo custom colors
+        apolo: {
+          glow: "hsl(var(--apolo-glow))",
+          "glow-subtle": "hsl(var(--apolo-glow-subtle))",
+          dark: "hsl(var(--apolo-dark))",
+          surface: "hsl(var(--apolo-surface))",
+          "surface-hover": "hsl(var(--apolo-surface-hover))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -84,6 +92,18 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "glow": "glow 2s ease-in-out infinite",
+        "float": "float 3s ease-in-out infinite",
+      },
+      backgroundImage: {
+        "gradient-hero": "var(--gradient-hero)",
+        "gradient-accent": "var(--gradient-accent)",
+        "gradient-subtle": "var(--gradient-subtle)",
+      },
+      boxShadow: {
+        "glow": "var(--shadow-glow)",
+        "card": "var(--shadow-card)",
+        "elegant": "var(--shadow-elegant)",
       },
     },
   },
