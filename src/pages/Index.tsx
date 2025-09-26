@@ -157,15 +157,13 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1">
-              <PoetryGenerator
-                onGenerate={generatePoetry}
-                isGenerating={isGenerating}
-              />
-            </div>
+          <div className="space-y-8">
+            <PoetryGenerator
+              onGenerate={generatePoetry}
+              isGenerating={isGenerating}
+            />
             
-            <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-6">
               {isGenerating && (
                 <PoetryCard
                   title="Criando..."
