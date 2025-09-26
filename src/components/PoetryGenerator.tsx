@@ -1,73 +1,65 @@
 import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Wand2, Download, Share2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Sparkles } from "lucide-react";
 
 interface PoetryGeneratorProps {
-  theme: string;
-  onGenerate: (prompt: string, theme: string) => void;
+  onGenerate: (message: string) => void;
   isGenerating: boolean;
 }
 
-export const PoetryGenerator = ({ theme, onGenerate, isGenerating }: PoetryGeneratorProps) => {
-  const [prompt, setPrompt] = useState("");
+export const PoetryGenerator = ({ onGenerate, isGenerating }: PoetryGeneratorProps) => {
+  const [message, setMessage] = useState("");
   const { toast } = useToast();
 
   const handleGenerate = () => {
-    if (!theme) {
+    if (!message.trim()) {
       toast({
-        title: "Selecione um tema",
-        description: "Por favor, escolha um tema antes de gerar a poesia.",
+        title: "Tema necessário",
+        description: "Por favor, digite o tema ou estilo de poesia desejado.",
         variant: "destructive",
       });
       return;
     }
 
-    if (!prompt.trim()) {
-      toast({
-        title: "Adicione uma inspiração",
-        description: "Escreva algumas palavras ou frases para inspirar Apolo.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    onGenerate(prompt, theme);
+    onGenerate(message.trim());
   };
 
   return (
-    <Card className="bg-apolo-surface border-apolo-glow/20">
+    <Card className="shadow-elegant border-primary/20">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-primary">
-          <Wand2 className="w-5 h-5" />
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <Sparkles className="w-5 h-5 text-primary" />
           Inspire Apolo
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <label htmlFor="prompt" className="text-sm font-medium text-foreground">
-            Sua inspiração:
-          </label>
+          <Label htmlFor="theme" className="text-sm font-medium text-foreground">
+            Tema ou Estilo da Poesia
+          </Label>
           <Textarea
-            id="prompt"
-            placeholder={`Escreva algumas palavras ou frases sobre ${theme.toLowerCase()}... O que você gostaria que Apolo explorasse em seus versos?`}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="min-h-[120px] bg-background border-border focus:border-primary resize-none"
+            id="theme"
+            placeholder="Digite o tema ou estilo desejado... (ex: amor melancólico, natureza primaveril, esperança urbana, mistério noturno...)"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="min-h-[100px] resize-none"
           />
         </div>
         
-        <Button
+        <Button 
           onClick={handleGenerate}
           disabled={isGenerating}
           className="w-full bg-gradient-accent hover:opacity-90 transition-opacity"
+          size="lg"
         >
           {isGenerating ? (
             <>
-              <Sparkles className="w-4 h-4 mr-2 animate-spin" />
-              Criando poesia...
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Criando...
             </>
           ) : (
             <>
@@ -76,13 +68,6 @@ export const PoetryGenerator = ({ theme, onGenerate, isGenerating }: PoetryGener
             </>
           )}
         </Button>
-
-        {theme && (
-          <div className="flex gap-2 text-xs text-muted-foreground">
-            <span>Tema selecionado:</span>
-            <span className="text-primary font-medium">{theme}</span>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

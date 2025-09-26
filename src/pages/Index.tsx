@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PoetryCard } from "@/components/PoetryCard";
-import { ThemeFilter } from "@/components/ThemeFilter";
 import { PoetryGenerator } from "@/components/PoetryGenerator";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, Music, BookOpen, Zap } from "lucide-react";
@@ -15,12 +14,12 @@ interface Poetry {
 }
 
 const Index = () => {
-  const [selectedTheme, setSelectedTheme] = useState("");
+  
   const [isGenerating, setIsGenerating] = useState(false);
   const [poetries, setPoetries] = useState<Poetry[]>([]);
   const { toast } = useToast();
 
-  const generatePoetry = async (prompt: string, theme: string) => {
+  const generatePoetry = async (message: string) => {
     setIsGenerating(true);
     
     try {
@@ -30,8 +29,7 @@ const Index = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: prompt,
-          theme: theme
+          message: message
         })
       });
 
@@ -46,7 +44,7 @@ const Index = () => {
         titulo: data.titulo,
         poema: data.poema,
         estilo: data.estilo,
-        theme: theme
+        theme: message
       };
 
       setPoetries(prev => [newPoetry, ...prev]);
@@ -159,15 +157,9 @@ const Index = () => {
             </p>
           </div>
 
-          <ThemeFilter 
-            selectedTheme={selectedTheme}
-            onThemeSelect={setSelectedTheme}
-          />
-
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
               <PoetryGenerator
-                theme={selectedTheme}
                 onGenerate={generatePoetry}
                 isGenerating={isGenerating}
               />
@@ -178,7 +170,7 @@ const Index = () => {
                 <PoetryCard
                   title="Criando..."
                   content=""
-                  theme={selectedTheme}
+                  theme="Criando..."
                   isGenerating={true}
                 />
               )}
