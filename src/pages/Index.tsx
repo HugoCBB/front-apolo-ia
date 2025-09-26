@@ -5,12 +5,12 @@ import { ThemeFilter } from "@/components/ThemeFilter";
 import { PoetryGenerator } from "@/components/PoetryGenerator";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, Music, BookOpen, Zap } from "lucide-react";
-import apoloHero from "@/assets/apolo-hero.jpg";
 
 interface Poetry {
   id: string;
-  title: string;
-  content: string;
+  titulo: string;
+  poema: string;
+  estilo: string;
   theme: string;
 }
 
@@ -20,44 +20,52 @@ const Index = () => {
   const [poetries, setPoetries] = useState<Poetry[]>([]);
   const { toast } = useToast();
 
-  // Simulação de geração de poesia (em produção, conectaria com a API do Apolo)
   const generatePoetry = async (prompt: string, theme: string) => {
     setIsGenerating(true);
     
-    // Simular delay da API
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Exemplo de poesia gerada
-    const examplePoetries = {
-      "Amor": {
-        title: "Coração em Versos",
-        content: `No silêncio da noite estrelada,\nTeu nome ecoa em minha alma,\nComo melodia encantada\nQue acalma e abraça com calma.\n\nEm cada verso que escrevo,\nTua essência se faz presente,\nAmor que nunca esquecerei,\nPaixão eternamente ardente.`
-      },
-      "Natureza": {
-        title: "Canção da Terra",
-        content: `O vento sussurra segredos\nEntre as folhas do carvalho,\nEnquanto o sol dourado espalha\nSeus raios pelos campos verdes.\n\nA natureza dança em harmonia,\nCada flor um verso novo,\nCada riacho uma melodia\nQue embala o coração do povo.`
-      },
-      "Melancolia": {
-        title: "Reflexões do Crepúsculo",
-        content: `No crepúsculo da existência,\nReflito sobre o que foi,\nPalavras não ditas ficaram,\nSonhos que o tempo levou.\n\nMas na melancolia encontro\nBeleza em cada lembrança,\nPois até na dor mais profunda\nHá poesia e esperança.`
+    try {
+      const response = await fetch('https://api-apolo-ia.onrender.com/api/v1/poetry/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+          theme: theme
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao gerar poesia');
       }
-    };
 
-    const newPoetry: Poetry = {
-      id: Date.now().toString(),
-      title: examplePoetries[theme as keyof typeof examplePoetries]?.title || "Versos Inspirados",
-      content: examplePoetries[theme as keyof typeof examplePoetries]?.content || `Inspirado em "${prompt}"\n\nVersos fluem como rio,\nPalavras dançam no ar,\nApolo tece a magia\nQue só a poesia pode dar.`,
-      theme
-    };
+      const data = await response.json();
+      
+      const newPoetry: Poetry = {
+        id: Date.now().toString(),
+        titulo: data.titulo,
+        poema: data.poema,
+        estilo: data.estilo,
+        theme: theme
+      };
 
-    setPoetries(prev => [newPoetry, ...prev]);
-    setIsGenerating(false);
-    
-    toast({
-      title: "Poesia criada!",
-      description: "Apolo teceu versos inspirados em sua alma.",
-    });
+      setPoetries(prev => [newPoetry, ...prev]);
+      
+      toast({
+        title: "Poesia criada!",
+        description: "Apolo teceu versos inspirados em sua alma.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao gerar poesia",
+        description: "Tente novamente em alguns instantes.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -124,11 +132,13 @@ const Index = () => {
 
             <div className="relative">
               <div className="apolo-float">
-                <img 
-                  src={apoloHero} 
-                  alt="Apolo - Deus da Poesia" 
-                  className="w-full h-auto rounded-2xl shadow-elegant"
-                />
+                <div className="w-full h-96 rounded-2xl shadow-elegant bg-gradient-accent flex items-center justify-center">
+                  <div className="text-center">
+                    <Sparkles className="w-16 h-16 mx-auto mb-4 text-white" />
+                    <h3 className="text-2xl font-bold text-white">Apolo IA</h3>
+                    <p className="text-white/80">Criando poesias únicas</p>
+                  </div>
+                </div>
               </div>
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-accent rounded-full blur-xl opacity-60"></div>
               <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
@@ -176,8 +186,8 @@ const Index = () => {
               {poetries.map((poetry) => (
                 <PoetryCard
                   key={poetry.id}
-                  title={poetry.title}
-                  content={poetry.content}
+                  title={poetry.titulo}
+                  content={poetry.poema}
                   theme={poetry.theme}
                 />
               ))}
