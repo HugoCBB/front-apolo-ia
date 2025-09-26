@@ -3,23 +3,23 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollText, Heart, Sparkles } from "lucide-react";
 
 interface PoetryCardProps {
-  title: string;
-  content: string;
-  theme: string;
+  titulo: string;
+  poema: string;
+  tema: string;
   isGenerating?: boolean;
 }
 
-export const PoetryCard = ({ title, content, theme, isGenerating = false }: PoetryCardProps) => {
+export const PoetryCard = ({ titulo, poema, tema, isGenerating = false }: PoetryCardProps) => {
   return (
     <Card className="bg-apolo-surface border-apolo-glow/20 hover:border-apolo-glow/40 transition-all duration-300 hover:shadow-glow">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
             <ScrollText className="w-5 h-5 text-primary" />
-            {title}
+            {titulo}
           </CardTitle>
           <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-            {theme}
+            {tema}
           </Badge>
         </div>
       </CardHeader>
@@ -33,7 +33,7 @@ export const PoetryCard = ({ title, content, theme, isGenerating = false }: Poet
           </div>
         ) : (
           <div className="whitespace-pre-line text-muted-foreground leading-relaxed">
-            {content}
+            {poema}
           </div>
         )}
       </CardContent>

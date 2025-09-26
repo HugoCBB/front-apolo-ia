@@ -4,13 +4,13 @@ import { PoetryCard } from "@/components/PoetryCard";
 import { PoetryGenerator } from "@/components/PoetryGenerator";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, Music, BookOpen, Zap } from "lucide-react";
+import axios from 'axios';
+
 
 interface Poetry {
-  id: string;
   titulo: string;
   poema: string;
   estilo: string;
-  theme: string;
 }
 
 const Index = () => {
@@ -23,35 +23,24 @@ const Index = () => {
     setIsGenerating(true);
     
     try {
-      const response = await fetch('https://api-apolo-ia.onrender.com/api/v1/poetry/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: message
-        })
-      });
+      const response = await axios.post('https://api-apolo-ia.onrender.com/api/v1/poetry/generate', {message}, {
+            headers: { 'Content-Type': 'application/json' },
+          })
 
-      if (!response.ok) {
+      if (!response) {
         throw new Error('Erro ao gerar poesia');
       }
 
-      const data = await response.json();
-      
       const newPoetry: Poetry = {
-        id: Date.now().toString(),
-        titulo: data.titulo,
-        poema: data.poema,
-        estilo: data.estilo,
-        theme: message
+        titulo: response.data.titulo,
+        poema: response.data.poema,
+        estilo: response.data.estilo,
       };
 
       setPoetries(prev => [newPoetry, ...prev]);
       
       toast({
-        title: "Poesia criada!",
-        description: "Apolo teceu versos inspirados em sua alma.",
+        title: "Poesia criada com sucesso!",
       });
     } catch (error) {
       toast({
@@ -59,6 +48,7 @@ const Index = () => {
         description: "Tente novamente em alguns instantes.",
         variant: "destructive",
       });
+
     } finally {
       setIsGenerating(false);
     }
@@ -76,7 +66,6 @@ const Index = () => {
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
                   <Music className="w-4 h-4 text-primary" />
-                  <span className="text-sm text-primary font-medium">Powered by AI</span>
                 </div>
                 
                 <h1 className="text-5xl md:text-7xl font-bold text-foreground leading-tight">
@@ -166,19 +155,18 @@ const Index = () => {
             <div className="space-y-6">
               {isGenerating && (
                 <PoetryCard
-                  title="Criando..."
-                  content=""
-                  theme="Criando..."
+                  titulo="Criando..."
+                  poema=""
+                  tema="Criando..."
                   isGenerating={true}
                 />
               )}
               
               {poetries.map((poetry) => (
                 <PoetryCard
-                  key={poetry.id}
-                  title={poetry.titulo}
-                  content={poetry.poema}
-                  theme={poetry.theme}
+                  titulo={poetry.titulo}
+                  poema={poetry.poema}
+                  tema={poetry.estilo}
                 />
               ))}
               
